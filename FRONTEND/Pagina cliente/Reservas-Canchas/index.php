@@ -60,7 +60,14 @@
               	<?php
                   include 'library/configServer.php';
                   include 'library/consulSQL.php';
-                  $consulta= ejecutarSQL::consultar("SELECT * FROM producto WHERE Stock > 0 AND Estado='Activo' ORDER BY id DESC LIMIT 7");
+                  $consulta= ejecutarSQL::consultar("SELECT
+                                                        p.nombre as nombre,
+                                                        p.descripcion as descripcion,
+                                                        p.precio as precio,
+                                                        s.existencias as stock
+                                                    FROM productos as p
+                                                    INNER JOIN stock as s ON s.id_producto=p.idproducto
+                                                    WHERE s.existencias > 0 ORDER BY p.idproducto DESC LIMIT 7;");
                   $totalproductos = mysqli_num_rows($consulta);
                   if($totalproductos>0){
                       while($fila=mysqli_fetch_array($consulta, MYSQLI_ASSOC)){
@@ -69,9 +76,9 @@
                      <div class="thumbnail">
                        <img class="img-product" src="assets/img-products/<?php if($fila['Imagen']!="" && is_file("./assets/img-products/".$fila['Imagen'])){ echo $fila['Imagen']; }else{ echo "default.png"; } ?>">
                        <div class="caption">
-                       		<h3><?php echo $fila['Marca']; ?></h3>
-                            <p><?php echo $fila['NombreProd']; ?></p>
-                            <?php if($fila['Descuento']>0): ?>
+                       		<h3><?php echo $fila['nombre']; ?></h3>
+                            <p><?php echo $fila['descripcion']; ?></p>
+                            <?php if($fila['descuento']>0): ?>
                              <p>
                              <?php
                              $pref=number_format($fila['Precio']-($fila['Precio']*($fila['Descuento']/100)), 2, '.', '');
@@ -79,11 +86,12 @@
                              ?>
                              </p>
                              <?php else: ?>
-                              <p>$<?php echo $fila['Precio']; ?></p>
+                              <p>$<?php echo $fila['precio']; ?></p>
                              <?php endif; ?>
-                        <p class="text-center">
+                             Disponible: <?php echo $fila['stock']; ?>
+                        <!-- <p class="text-center">
                             <a href="infoProd.php?CodigoProd=<?php echo $fila['CodigoProd']; ?>" class="btn btn-primary btn-sm btn-raised btn-block"><i class="fa fa-plus"></i>&nbsp; Detalles</a>
-                        </p>
+                        </p> -->
                        </div>
                      </div>
                 </div>     
