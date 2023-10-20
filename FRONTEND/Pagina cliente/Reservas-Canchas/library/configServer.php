@@ -1,5 +1,5 @@
 <?php
 define("USER", "root");
 define("SERVER", "localhost");
-define("BD", "");
+define("BD", "sistema_reservas");
 define("PASS", "");
